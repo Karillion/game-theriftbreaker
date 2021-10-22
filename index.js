@@ -1,15 +1,16 @@
-const path = require("path");
-const winapi = require("winapi-bindings");
-const { fs, log, util } = require("vortex-api");
+const path = require('path');
+const winapi = require('winapi-bindings');
+const { fs, log, util } = require('vortex-api');
 
 // game variables
-const GAME_ID = "theriftbreaker";
-const GAME_NAME = "The Riftbreaker";
-const GAME_EXECUTABLE = "bin/riftbreaker_win_release.exe";
+const GAME_ID = 'theriftbreaker';
+const GAME_NAME = 'The Riftbreaker';
+const GAME_EXECUTABLE = 'bin/riftbreaker_win_release.exe';
 
 // store variables
-const STEAMAPP_ID = "780310";
-const GOGAPP_ID = "2147483111";
+const STEAMAPP_ID = '780310';
+const GOGAPP_ID = '2147483111';
+const EPICAPP_ID = '5bf44beb2a1f437696f637071203be7c';
 
 function main(context) {
   context.registerGame({
@@ -17,8 +18,8 @@ function main(context) {
     name: GAME_NAME,
     mergeMods: true,
     queryPath: findGame,
-    queryModPath: () => "packs",
-    logo: "gameart.jpg",
+    queryModPath: () => 'packs',
+    logo: 'gameart.jpg',
     executable: () => GAME_EXECUTABLE,
     requiredFiles: [GAME_EXECUTABLE],
     supportedTools: [],
@@ -29,11 +30,12 @@ function main(context) {
     details: {
       steamAppId: STEAMAPP_ID,
       gogAppId: GOGAPP_ID,
+      epicAppId: EPICAPP_ID,
     },
   });
 
   context.registerInstaller(
-    "theriftbreaker-mod",
+    'theriftbreaker-mod',
     25,
     testSupportedContent,
     installContent
@@ -45,16 +47,16 @@ function main(context) {
 function findGame() {
   try {
     const instPath = winapi.RegGetValue(
-      "HKEY_LOCAL_MACHINE",
-      "SOFTWARE\\WOW6432Node\\GOG.com\\Games\\" + GOGAPP_ID,
-      "PATH"
+      'HKEY_LOCAL_MACHINE',
+      'SOFTWARE\\WOW6432Node\\GOG.com\\Games\\' + GOGAPP_ID,
+      'PATH'
     );
     if (!instPath) {
-      throw new Error("empty registry key");
+      throw new Error('empty registry key');
     }
     return Promise.resolve(instPath.value);
   } catch (err) {
-    return util.GameStoreHelper.findByAppId([STEAMAPP_ID, GOGAPP_ID]).then(
+    return util.GameStoreHelper.findByAppId([STEAMAPP_ID, GOGAPP_ID, EPICAPP_ID]).then(
       (game) => game.gamePath
     );
   }
@@ -62,19 +64,19 @@ function findGame() {
 
 async function installContent(files, destinationPath) {
   const szip = new util.SevenZip();
-  const archiveName = path.basename(destinationPath, ".installing") + ".zip";
+  const archiveName = path.basename(destinationPath, '.installing') + '.zip';
   const archivePath = path.join(destinationPath, archiveName);
   const rootRelPaths = await fs.readdirAsync(destinationPath);
 
   await szip.add(
     archivePath,
     rootRelPaths.map((relPath) => path.join(destinationPath, relPath)),
-    { raw: ["-r"] }
+    { raw: ['-r'] }
   );
 
   const instructions = [
     {
-      type: "copy",
+      type: 'copy',
       source: archiveName,
       destination: archiveName,
     },
