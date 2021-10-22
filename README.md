@@ -1,0 +1,1 @@
+Thank you to Pickysaurus and their Farming Simulator 19 Support plugin. I used this as an example of how to handle mods which are packed as zip files and should not be unpacked during installation.
