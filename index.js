@@ -12,10 +12,6 @@ const EPICAPP_ID = '5bf44beb2a1f437696f637071203be7c';
 const GOGAPP_ID = '2147483111';
 const STEAMAPP_ID = '780310';
 
-// set this to true to deploy mods as zip files to the Packs folder
-// this was how the extension originally deployed mods, now disabled by default.
-const DEPLOY_PACKS = false;
-
 /**
  * Entry point
  */
@@ -25,7 +21,7 @@ function main(context) {
     name: GAME_NAME,
     mergeMods: true,
     queryPath: findGame,
-    queryModPath: () => (DEPLOY_PACKS ? 'packs' : 'data'),
+    queryModPath: () => 'data',
     logo: 'gameart.jpg',
     executable: () => GAME_EXECUTABLE,
     requiredFiles: [GAME_EXECUTABLE],
@@ -65,42 +61,6 @@ function findGame() {
       EPICAPP_ID
     ]).then((game) => game.gamePath);
   }
-}
-
-/**
- * Deploys keeps mods in a zip file and deploys them to the Packs folder.
- */
-async function installContent(files, destinationPath) {
-  const szip = new util.SevenZip();
-  const archiveName = path.basename(destinationPath, '.installing') + '.zip';
-  const archivePath = path.join(destinationPath, archiveName);
-  const rootRelPaths = await fs.readdirAsync(destinationPath);
-
-  await szip.add(
-    archivePath,
-    rootRelPaths.map((relPath) => path.join(destinationPath, relPath)),
-    { raw: ['-r'] }
-  );
-
-  const instructions = [
-    {
-      type: 'copy',
-      source: archiveName,
-      destination: archiveName
-    },
-  ];
-
-  return Promise.resolve({ instructions });
-}
-
-/**
- * Verify if a mod is compatible with the game.
- */
-function testSupportedContent(_, gameId) {
-  return Promise.resolve({
-    supported: gameId === GAME_ID,
-    requiredFiles: []
-  });
 }
 
 /**
