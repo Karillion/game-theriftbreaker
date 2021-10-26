@@ -67,10 +67,6 @@ function findGame() {
  * Ensure the game is ready to be modified.
  */
 function prepareForModding(discovery) {
-  if (DEPLOY_PACKS) {
-    return fs.ensureDirWritableAsync(path.join(discovery.path, 'packs'));
-  }
-
   return fs.ensureDirWritableAsync(path.join(discovery.path, 'data'));
 }
 
