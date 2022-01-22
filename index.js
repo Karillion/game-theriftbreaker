@@ -24,7 +24,7 @@ function main(context) {
     logo: 'gameart.jpg',
     executable: (discoveryPath) => {
       const winPath = 'bin/riftbreaker_win_release.exe';
-      const winStorePath = 'bin/riftbreaker_winstore_release.exe';
+      const winStorePath = 'riftbreaker_winstore_release.exe';
 
       if (
         discoveryPath !== undefined &&
@@ -34,7 +34,7 @@ function main(context) {
 
       return winPath;
     },
-    requiredFiles: ['packs/00_win_data.zip'],
+    requiredFiles: ['packs/01_win_data.zip'],
     supportedTools: [],
     setup: prepareForModding,
     environment: {
